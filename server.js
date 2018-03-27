@@ -351,10 +351,27 @@ function downvotedBy(url, request) {
   return response;
 }
 
-// Write all code above this line.
+function loadDatabase() {
+ try {
+   return yaml.safeLoad(fs.readFileSync('database.yml').toString());
+ }
+ catch (e) {
+   return null;
+ }
+}
 
+function saveDatabase() {
+ fs.writeFile('database.yml', yaml.safeDump(database), (err) => {
+   if (err) throw err;
+   console.log('The file has been saved!');
+ });
+}
+
+// Write all code above this line.
 const http = require('http');
 const url = require('url');
+const fs = require('fs');
+const yaml = require('js-yaml');
 
 const port = process.env.PORT || 4000;
 const isTestMode = process.env.IS_TEST_MODE;
@@ -375,7 +392,7 @@ const requestHandler = (request, response) => {
     return response.end();
   }
 
-  response.setHeader('Access-Control-Allow-Origin', null);
+  response.setHeader('Access-Control-Allow-Origin', "*");
   response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   response.setHeader(
       'Access-Control-Allow-Headers', 'X-Requested-With,content-type');
